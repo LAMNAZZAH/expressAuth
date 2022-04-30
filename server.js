@@ -12,6 +12,11 @@ const { PORT = 5000,
 
 const IN_PROD = NODE_ENV === 'production';
 
+const users = [
+    {id: 1, name: 'mohammed', email:'moha@gmail.com', password: 'thepass'},
+    {id: 2, name: 'hamada', email:'hamada@gmail.com', password: 'thepass'}
+]
+
 const app = express(); 
 
 app.use(session({
@@ -27,16 +32,19 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
+    const { userId } = req.session
     console.log(req.session);
     res.send(`
     <h1>welcome!</h1>
-    <a href='/login'>login</a>
-    <a href='/register'>register</a>
-
+    ${userId ? `
     <a href='/home'>Home</a>
     <form method='post' action='/logout'>
     <button>Logout</button>
     </form>
+    ` : `
+    <a href='/login'>login</a>
+    <a href='/register'>register</a>
+    `}
     `)
 })
 
@@ -45,6 +53,7 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
+    //req.session.userId = 
 
 })
 
