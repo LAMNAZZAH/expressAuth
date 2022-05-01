@@ -55,6 +55,14 @@ const redirectHome = (req, res, next) => {
     }
 }
 
+app.use((req, res, next) => {
+    const { userId } = req.session 
+    if (userId) {
+        res.locals.user = users.find(user => user.id === userId)
+    }
+    next()
+})
+
 app.get("/", (req, res) => {
   const { userId } = req.session;
   console.log(req.session);
@@ -77,15 +85,21 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", redirectLogin,  (req, res) => {
+    const { user } = res.locals
+    console.log(req.session); 
   res.send(`
   <h1>Home</h1>
   <a href='/'>Main</a>
   <ul>
-  <li>Name: </li>
-  <li>Email: </li>
+  <li>Name: ${user.name}</li>
+  <li>Email: ${user.email}</li>
   </ul>
   `)
 });
+
+app.get('/profile', (req, res) => {
+
+})
 
 app.get("/login",redirectHome, (req, res) => {
   res.send(`
@@ -113,7 +127,8 @@ app.get("/register",redirectHome, (req, res) => {
 });
 
 app.post("/login",redirectHome,  (req, res) => {
-    const { email, password } = req.body 
+    const { email, password } = req.body
+    console.log(req.session); 
 
     if ( email && password ) {
         const user = users.find(
